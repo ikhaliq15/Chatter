@@ -19,13 +19,17 @@ June 2015 Version 1.3 Beta
     - kick people
     - get users
 
-August 2015 Version 1.7.1
-  - Fix glitched name bug
+August 2015 Version 1.7.1 Beta
+  - Fix glitched name bug (Kind of)
   - When Server Closed, Clients Closed
+ 
+August 2015 Version 1.8.4 Beta
+  - Added Clear Command
+  - get ips of clients (semi-workking)
   
 Possible Updates:
   - More Commands like:
-    - get ip's of clients
+    - stop person from typing for a minute
   - Saved Servers List
   - Give Op Permission from server window
   

@@ -89,50 +89,50 @@ public class ChatServer {
         chatclient.logout.setText("Close Server");
         
         //The action listener for the box where the message is typed
-        chatclient.textField.addActionListener(new ActionListener(){
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				if(nameTyped == 1){
-					adminname = names.get(0);
-					nameTyped ++;
-				}
-				nameTyped ++;
-				PrintWriter out = null;
-				try {
-					out = new PrintWriter(socket.getOutputStream(), true);
-				} catch (IOException e1) {
-					e1.printStackTrace();
-				}
-				if(chatclient.textField.getText().toString().toLowerCase().contains("/kick")){
-					try{
-						names.remove(chatclient.textField.getText().toString().substring(6));
-					}catch(Exception ex){
-						chatclient.messageArea.append("Use of kick: /kick [name]\n");
-					}
-				}else if(chatclient.textField.getText().toString().contains("/close")){
-					try{
-						System.exit(0);
-					}catch(Exception exception){
-						
-					}
-				}else if(chatclient.textField.getText().toString().contains("/get")){
-					try{
-						if(!chatclient.textField.getText().toString().substring(5).equals(null) || !chatclient.textField.getText().toString().substring(5).equals("")){
-							if(chatclient.textField.getText().toString().substring(5).contains("names")){
-								chatclient.messageArea.append(names.toString() + "\n");
-							}else if(chatclient.textField.getText().toString().substring(5).contains("ips")){
-								//chatclient.messageArea.append(ip.toString() + "\n");
-							}
-						}
-					}catch(Exception exception1){
-						chatclient.messageArea.append("Use of get: /get [names]\n");
-					}
-				}else{
-					out.println(chatclient.textField.getText());
-				}
-				chatclient.textField.setText("");
-			}  
-        });
+        
+        try{
+        	
+        	
+        	PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
+        	
+        	chatclient.textField.addActionListener(new ActionListener(){
+        		@Override
+        		public void actionPerformed(ActionEvent e) {
+        			if(nameTyped == 1){
+        				adminname = names.get(0);
+        				nameTyped ++;
+        			}
+        			nameTyped ++;
+        			
+        			if(chatclient.textField.getText().toString().toLowerCase().contains("/kick")){
+        				try{
+        					names.remove(chatclient.textField.getText().toString().substring(6));
+        				}catch(Exception ex){
+        					chatclient.messageArea.append("Use of kick: /kick [name]\n");
+        				}
+        			}else if(chatclient.textField.getText().toString().contains("/reset")){
+        				out.println("CLEAR");
+        			}else if(chatclient.textField.getText().toString().contains("/get")){
+        				try{
+        					if(!chatclient.textField.getText().toString().substring(5).equals(null) || !chatclient.textField.getText().toString().substring(5).equals("")){
+        						if(chatclient.textField.getText().toString().substring(5).contains("names")){
+        							chatclient.messageArea.append(names.toString() + "\n");
+        						}else if(chatclient.textField.getText().toString().substring(5).contains("ips")){
+        							chatclient.messageArea.append(ip.toString() + "\n");
+        						}
+        					}
+        				}catch(Exception exception1){
+        					chatclient.messageArea.append("Use of get: /get [names]\n");
+        				}
+        			}else{
+        				out.println(chatclient.textField.getText());
+        			}
+        			chatclient.textField.setText("");
+        		}  
+        	});
+        }catch(Exception ex){
+        	
+        }
         
         //Start Listening For Other People
         try {
@@ -167,7 +167,8 @@ public class ChatServer {
         private Socket socket;
         private BufferedReader in;
         private PrintWriter out;
-
+       
+        
         /**
          * Constructs a handler thread, squirreling away the socket.
          * All the interesting work is done in the run method.
@@ -183,6 +184,7 @@ public class ChatServer {
          * the client in a global set, then repeatedly gets inputs and
          * broadcasts them.
          */
+        
         public void run() {
             try {
 
@@ -203,9 +205,24 @@ public class ChatServer {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
         				out.println("EXIT");
-        				System.out.println();
+        				//System.out.println();
                     }
                 });
+                
+                
+                chatclient.textField.addActionListener(new ActionListener(){
+            		@Override
+            		public void actionPerformed(ActionEvent e) {
+            			if(chatclient.textField.getText().contains("/reset")){
+                			out.println("CLEAR");
+                			chatclient.messageArea.setText((""));
+            			}
+            			if(chatclient.textField.getText().equals("")){
+            				
+            			}
+            		}	
+            	});
+                
                 
                 // Request a name from this client.  Keep requesting until
                 // a name is submitted that is not already used.  Note that
@@ -240,6 +257,7 @@ public class ChatServer {
                 // socket's print writer to the set of all writers so
                 // this client can receive broadcast messages.
                 out.println("NAMEACCEPTED");
+                out.println("IPASK");
                 writers.add(out);
 
                 // Accept messages from this client and broadcast them.
@@ -250,15 +268,20 @@ public class ChatServer {
                     if (input == null) {
                         return;
                     }
+                    System.out.println(input);
                     for (PrintWriter writer : writers) {
-                       //writer.println("MESSAGE " + input);
-                       if(name.equals(adminname)){
+                       if(input.equals("CLEAR")){
+                    	   out.println("CLEAR");
+                       }else if(input.startsWith("IP")){
+                    	   ip.add(input.substring(2));
+                       }else if(name.equals(adminname)){
                            writer.println("MESSAGE " + "[" + adminname + "]"+ ": " + input);
                        }else if(input.startsWith("ADDIP")){
                     	   //ip.add(input.substring(6));
                        }else{
                     	   if(names.contains(name)){
                     		   writer.println("MESSAGE " + input + "\n");
+                    		   //System.out.println("a message");
                     	   }else{
                     		   out.println("BANNED");
                     	   }
@@ -266,6 +289,8 @@ public class ChatServer {
                     }
                     if(name.equals(adminname)){
                     	chatclient.messageArea.append("[" + adminname + "]"+ ": " + input + "\n");
+                    }else if(input.startsWith("IP")){
+                    	chatclient.messageArea.append("");
                     }else{
                     	chatclient.messageArea.append(input + "\n");
                     }

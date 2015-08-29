@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.URL;
+import java.net.URLConnection;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -125,31 +127,32 @@ public class ChatClient {
         in = new BufferedReader(new InputStreamReader(
             socket.getInputStream()));
         out = new PrintWriter(socket.getOutputStream(), true);
-//        URL connection = new URL("http://checkip.amazonaws.com/");
-//        URLConnection con = connection.openConnection();
-//        String str = null;
-//        BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
-//        str = reader.readLine();
-//        out.println("ADDIP" + str);
+        URL connection = new URL("http://checkip.amazonaws.com/");
+        URLConnection con = connection.openConnection();
+        String str = null;
+        BufferedReader reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
+        str = reader.readLine();
+        
 
         // Process all messages from server, according to the protocol.
         while (true) {
             String line = in.readLine();
             System.out.println(line);
-            if(line == null){
-            	System.out.println("Null Line");
-            }
             if (line.startsWith("SUBMITNAME")) {
                 //System.out.println();
                 out.println(getName());
             } else if (line.startsWith("NAMEACCEPTED")) {
                 textField.setEditable(true);
+            }else if(line.equals("IPASK")){
+            	out.println("IP " + str);
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
             } else if(line.startsWith("YOUJOINED")){
             	messageArea.append(line.substring(10) + "\n");
             } else if(line.equals("EXIT")){
             	System.exit(0);
+            } else if(line.equals("CLEAR")){
+            	messageArea.setText("You're screen has been cleared by server.");
             } else if(line.equals("QUIT")){
             	System.exit(0);
             } else if(line.equals("BANNED")){
