@@ -98,11 +98,16 @@ public class ChatServer {
         	chatclient.textField.addActionListener(new ActionListener(){
         		@Override
         		public void actionPerformed(ActionEvent e) {
-        			if(nameTyped == 1){
-        				adminname = names.get(0);
-        				nameTyped ++;
+//        			if(nameTyped == 1){
+//        				adminname = names.get(0);
+//        				nameTyped ++;
+//        			}
+        			if(names.size() > 0){
+        				adminname = names.get(names.size()-1);
+        			}else{
+        				adminname = chatclient.textField.getText();
         			}
-        			nameTyped ++;
+        			//nameTyped ++;
         			
         			if(chatclient.textField.getText().toString().toLowerCase().contains("/kick")){
         				try{
@@ -118,11 +123,11 @@ public class ChatServer {
         						if(chatclient.textField.getText().toString().substring(5).contains("names")){
         							chatclient.messageArea.append(names.toString() + "\n");
         						}else if(chatclient.textField.getText().toString().substring(5).contains("ips")){
-        							chatclient.messageArea.append(ip.toString() + "\n");
+        							chatclient.messageArea.append(getIps() + "\n");
         						}
         					}
         				}catch(Exception exception1){
-        					chatclient.messageArea.append("Use of get: /get [names]\n");
+        					chatclient.messageArea.append("Use of get: /get [names;ips]\n");
         				}
         			}else{
         				out.println(chatclient.textField.getText());
@@ -145,7 +150,15 @@ public class ChatServer {
         }
     }
     
-    public static int close(){
+    protected static String getIps() {
+    	List<String> ips = new ArrayList<String>();
+    	for(int i = 0; i < ip.size()/2;i+=2){
+    		ips.add(ip.get(i));
+    	}
+    	return ips.toString();
+	}
+
+	public static int close(){
     		PrintWriter out = null;
 			try {
 				out = new PrintWriter(socket.getOutputStream(), true);
@@ -229,7 +242,9 @@ public class ChatServer {
                 // checking for the existence of a name and adding the name
                 // must be done while locking the set of names.
                 while (true) {
-                    out.println("SUBMITNAME");
+                	if(!names.isEmpty()){
+                		out.println("SUBMITNAME");
+                	}
                     name = in.readLine();
                     if (name == null) {
                         return;
@@ -268,12 +283,15 @@ public class ChatServer {
                     if (input == null) {
                         return;
                     }
-                    System.out.println(input);
+                    //System.out.println(input);
                     for (PrintWriter writer : writers) {
                        if(input.equals("CLEAR")){
                     	   out.println("CLEAR");
                        }else if(input.startsWith("IP")){
-                    	   ip.add(input.substring(2));
+                    	   if(!name.equals(null)){
+                    		   System.out.println(name);
+                    		   ip.add(name + ": " + input.substring(2));
+                    	   }
                        }else if(name.equals(adminname)){
                            writer.println("MESSAGE " + "[" + adminname + "]"+ ": " + input);
                        }else if(input.startsWith("ADDIP")){

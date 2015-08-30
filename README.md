@@ -27,6 +27,11 @@ August 2015 Version 1.8.4 Beta
   - Added Clear Command
   - get ips of clients (semi-workking)
   
+August 2015 Version 1.8.5 Beta
+  - Fixed Minor Bugs
+  - get ip command works properly
+  - server does not open until admin name is ready
+  
 Possible Updates:
   - More Commands like:
     - stop person from typing for a minute
