@@ -31,12 +31,21 @@ August 2015 Version 1.8.5 Beta
   - Fixed Minor Bugs
   - get ip command works properly
   - server does not open until admin name is ready
+
+August 2015 Version 1.8.9 Beta
+  - Fixed Minor Bugs
+  - Server Admin Can Op Clients 
+    - Opped Clients Have Commands: Clear and Op, 
+    - Will Ad More Commands For Op Soon
+  - Clicking "Close Server" Button Now Closes "All" Clients
   
 Possible Updates:
   - More Commands like:
     - stop person from typing for a minute
   - Saved Servers List
-  - Give Op Permission from server window
+  - Add Version Control, So A Client Can Only 
+    Be Using Same Version As Server (Avoid Issues
+    With Certain Clients Avoid New Commands)
   
   If you update or change anything, please make pull request.
   

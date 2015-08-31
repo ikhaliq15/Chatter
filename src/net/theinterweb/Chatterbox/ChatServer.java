@@ -15,25 +15,7 @@ import java.util.Scanner;
 
 import javax.swing.JFrame;
 
-/**
- * A multithreaded chat room server.  When a client connects the
- * server requests a screen name by sending the client the
- * text "SUBMITNAME", and keeps requesting a name until
- * a unique one is received.  After a client submits a unique
- * name, the server acknowledges with "NAMEACCEPTED".  Then
- * all messages from that client will be broadcast to all other
- * clients that have submitted a unique screen name.  The
- * broadcast messages are prefixed with "MESSAGE ".
- *
- * Because this is just a teaching example to illustrate a simple
- * chat server, there are a few features that have been left out.
- * Two are very useful and belong in production code:
- *
- *     1. The protocol should be enhanced so that the client can
- *        send clean disconnect messages to the server.
- *
- *     2. The server should do some logging.
- */
+
 public class ChatServer {
 
     /**
@@ -52,6 +34,9 @@ public class ChatServer {
      * The set of all the print writers for all the clients.  This
      * set is kept so we can easily broadcast messages.
      */
+    
+    private static ArrayList<String> admins = new ArrayList<String>();
+    
     private static HashSet<PrintWriter> writers = new HashSet<PrintWriter>();
 
     /**
@@ -116,7 +101,7 @@ public class ChatServer {
         					chatclient.messageArea.append("Use of kick: /kick [name]\n");
         				}
         			}else if(chatclient.textField.getText().toString().contains("/reset")){
-        				out.println("CLEAR");
+        				//out.println("CLEAR");
         			}else if(chatclient.textField.getText().toString().contains("/get")){
         				try{
         					if(!chatclient.textField.getText().toString().substring(5).equals(null) || !chatclient.textField.getText().toString().substring(5).equals("")){
@@ -129,6 +114,8 @@ public class ChatServer {
         				}catch(Exception exception1){
         					chatclient.messageArea.append("Use of get: /get [names;ips]\n");
         				}
+        			}else if(chatclient.textField.getText().toString().contains("/op")){
+        				admins.add(chatclient.textField.getText().toString().substring(4));
         			}else{
         				out.println(chatclient.textField.getText());
         			}
@@ -210,7 +197,6 @@ public class ChatServer {
                 chatclient.logout.addActionListener(new ActionListener(){
                 	public void actionPerformed(ActionEvent e){
                 		out.println("EXIT");
-                		System.exit(0);
                 	}
                 });
                 
@@ -218,7 +204,7 @@ public class ChatServer {
                     @Override
                     public void windowClosing(java.awt.event.WindowEvent windowEvent) {
         				out.println("EXIT");
-        				//System.out.println();
+        				
                     }
                 });
                 
@@ -294,8 +280,28 @@ public class ChatServer {
                     	   }
                        }else if(name.equals(adminname)){
                            writer.println("MESSAGE " + "[" + adminname + "]"+ ": " + input);
-                       }else if(input.startsWith("ADDIP")){
-                    	   //ip.add(input.substring(6));
+                       }else if(admins.contains(name)){
+                    	   if(input.contains("/reset")){
+                    		   out.println("CLEAR");
+                    	   }else if(input.contains("/op")){
+                    		   admins.add(input.substring(name.length()+6));
+                    		   //System.out.println(input);
+                    		   //System.out.println(admins);
+                    	   }else if(input.contains("/get")){
+                    		   try{
+               					if(!input.substring(5).equals(null) || !input.substring(5).equals("")){
+               						if(input.substring(5).contains("names")){
+               							
+               						}else if(input.substring(5).contains("ips")){
+               							writer.println("Use of get: /get [names;ips]\n");
+               						}
+               					}
+               				}catch(Exception exception1){
+               					writer.println("Use of get: /get [names;ips]\n");
+               				}
+                    	   }else{
+                    		   writer.println("MESSAGE [" + name + "]"+ ": " + input.substring((name.length())+2, input.length()) + "\n");
+                    	   }
                        }else{
                     	   if(names.contains(name)){
                     		   writer.println("MESSAGE " + input + "\n");
@@ -305,7 +311,9 @@ public class ChatServer {
                     	   }
                        }
                     }
-                    if(name.equals(adminname)){
+                    if(admins.contains(name)){
+            				chatclient.messageArea.append("[" + name + "]"+ ": " + input.substring((name.length())+2, input.length()) + "\n");
+            		}else if(name.equals(adminname)){
                     	chatclient.messageArea.append("[" + adminname + "]"+ ": " + input + "\n");
                     }else if(input.startsWith("IP")){
                     	chatclient.messageArea.append("");
