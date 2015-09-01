@@ -123,8 +123,10 @@ public class ChatClient {
         // Process all messages from server, according to the protocol.
         while (true) {
             String line = in.readLine();
-            //System.out.println(line);
-            if (line.startsWith("SUBMITNAME")) {
+            System.out.println(line);
+            if(line.equals(null)){
+            
+            }else if (line.startsWith("SUBMITNAME")) {
                 //System.out.println();
                 out.println(getName());
             } else if (line.startsWith("NAMEACCEPTED")) {
@@ -133,6 +135,7 @@ public class ChatClient {
             	out.println("IP " + str);
             } else if (line.startsWith("MESSAGE")) {
                 messageArea.append(line.substring(8) + "\n");
+                //if(
             } else if(line.startsWith("YOUJOINED")){
             	//messageArea.append(line.substring(10) + "\n");
             } else if(line.equals("EXIT")){
@@ -154,6 +157,11 @@ public class ChatClient {
 					}
             	}
             	System.exit(0);
+            } else if(line.startsWith("GETNAMES ")){
+            	messageArea.append(line.substring(9, line.length()) + "\n");
+            	//line = "";
+            } else if(line.startsWith("GETIPS ")){
+            	messageArea.append(line.substring(7, line.length()) + "\n");
             }
         }
 }

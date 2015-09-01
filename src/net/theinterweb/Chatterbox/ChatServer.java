@@ -108,11 +108,14 @@ public class ChatServer {
         						if(chatclient.textField.getText().toString().substring(5).contains("names")){
         							chatclient.messageArea.append(names.toString() + "\n");
         						}else if(chatclient.textField.getText().toString().substring(5).contains("ips")){
-        							chatclient.messageArea.append(getIps() + "\n");
+        							chatclient.messageArea.append(ip.toString() + "\n");
+        							//System.out.println(ip);
+        						}else if(chatclient.textField.getText().toString().substring(5).contains("admins")){
+        							chatclient.messageArea.append(admins.toString() + "\n");
         						}
         					}
         				}catch(Exception exception1){
-        					chatclient.messageArea.append("Use of get: /get [names;ips]\n");
+        					chatclient.messageArea.append("Use of get: /get [names;ips;admins]\n");
         				}
         			}else if(chatclient.textField.getText().toString().contains("/op")){
         				admins.add(chatclient.textField.getText().toString().substring(4));
@@ -269,13 +272,13 @@ public class ChatServer {
                     if (input == null) {
                         return;
                     }
-                    //System.out.println(input);
+                    System.out.println(input);
                     for (PrintWriter writer : writers) {
                        if(input.equals("CLEAR")){
                     	   out.println("CLEAR");
                        }else if(input.startsWith("IP")){
-                    	   if(!name.equals(null)){
-                    		   System.out.println(name);
+                    	   if(!name.equals(null) && !ip.contains(name + ": " + input.substring(2))){
+                    		   //System.out.println(name);
                     		   ip.add(name + ": " + input.substring(2));
                     	   }
                        }else if(name.equals(adminname)){
@@ -291,9 +294,12 @@ public class ChatServer {
                     		   try{
                					if(!input.substring(5).equals(null) || !input.substring(5).equals("")){
                						if(input.substring(5).contains("names")){
-               							
+               							out.println("GETNAMES " + names.toString());
+               							input = "GOTNAMES";
+               							//System.out.println("NAMES SENT!");
                						}else if(input.substring(5).contains("ips")){
-               							writer.println("Use of get: /get [names;ips]\n");
+               							out.println("GETIPS " + ip.toString());
+               							input = "GOTNAMES";
                						}
                					}
                				}catch(Exception exception1){

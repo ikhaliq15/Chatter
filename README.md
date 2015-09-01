@@ -38,8 +38,14 @@ August 2015 Version 1.8.9 Beta
     - Opped Clients Have Commands: Clear and Op, 
     - Will Ad More Commands For Op Soon
   - Clicking "Close Server" Button Now Closes "All" Clients
+
+August 2015 Version 1.9.4 Beta
+  - Fixed Minor Bugs
+  - Opped Clients Can Get Names And Ips
+  - GET READY FOR 2.0!!!
   
 Possible Updates:
+  - Stopping Opped Clients From Opping Other Clients.
   - More Commands like:
     - stop person from typing for a minute
   - Saved Servers List
